@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#name: all
+#short: Run all status checks on the local cluster
+
+echo "Checking App"
+"$(dirname "${BASH_SOURCE[0]}")/app"
+
+echo "Checking Grafana"
+"$(dirname "${BASH_SOURCE[0]}")/grafana"
+
+echo "Checking Prometheus"
+"$(dirname "${BASH_SOURCE[0]}")/prometheus"

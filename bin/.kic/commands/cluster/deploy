@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# name: deploy
+# short: Deploy the apps to the local k3d cluster
+
+# change to this directory
+#cd "$(dirname "${BASH_SOURCE[0]}")" || exit
+
+# validate directories
+if [ ! -d ./deploy ]; then echo "./deploy directory not found. Please cd to an appropriate directory"; exit 1; fi
+if [ ! -d ./deploy/webv ]; then echo "./deploy/webv directory not found. Please cd to an appropriate directory"; exit 1; fi
+if [ ! -d ./deploy/app ]; then echo "./deploy/app directory not found. Please cd to an appropriate directory"; exit 1; fi
+if [ ! -d ./deploy/bootstrap ]; then echo "./deploy/bootstrap directory not found. Please cd to an appropriate directory"; exit 1; fi
+
+# build the app
+"$(dirname "${BASH_SOURCE[0]}")/../app/build"
+
+# create namespaces
+kubectl apply -f deploy
+kubectl apply -f deploy/bootstrap
+
+# deploy app reference app
+kubectl apply -f deploy/app
+
+# deploy prometheus, grafana, and fluent bit
+kubectl apply -R -f deploy/bootstrap
+
+# deploy jumpbox
+"$(dirname "${BASH_SOURCE[0]}")/jumpbox"
+
+# deploy WebV after the app starts
+kubectl wait pod -l app=csapp -n csapp --for condition=ready --timeout=60s
+
+kubectl apply -f deploy/webv
