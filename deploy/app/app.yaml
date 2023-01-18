@@ -26,7 +26,7 @@ spec:
               protocol: TCP
 
           readinessProbe:
-            initialDelaySeconds: 5
+            initialDelaySeconds: 10
             failureThreshold: 60
             periodSeconds: 2
             httpGet:
