@@ -17,12 +17,12 @@ spec:
     spec:
       containers:
         - name: app
-          image: k3d-registry.localhost:5500/csapp:local
+          image: nginx
           imagePullPolicy: Always
 
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: 80
               protocol: TCP
 
           readinessProbe:
@@ -30,15 +30,15 @@ spec:
             failureThreshold: 60
             periodSeconds: 2
             httpGet:
-              path: /readyz
-              port: 8080
+              path: /
+              port: 80
 
           livenessProbe:
             initialDelaySeconds: 60
             periodSeconds: 60
             httpGet:
-              path: /healthz
-              port: 8080
+              path: /
+              port: 80
 
           resources:
             limits:
@@ -58,7 +58,7 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - port: 8080
+    - port: 8081
       nodePort: 30080
       targetPort: http
       protocol: TCP
